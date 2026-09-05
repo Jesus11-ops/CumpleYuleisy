@@ -1,0 +1,14 @@
+Copia aquí tu video con el nombre EXACTO:
+
+video.mp4
+
+Debe ser formato .mp4 para que funcione en todos los celulares.
+Si tu video está en otro formato (.mov, .avi), conviértelo primero
+en https://cloudconvert.com/mp4-converter (gratis).
+
+Consejo: si el video pesa mucho (más de 50-80 MB), GitHub puede
+rechazarlo o la página cargará lenta en el celular de ella.
+Comprímelo un poco en https://www.freeconvert.com/video-compressor
+antes de subirlo.
+
+Cuando termines, borra este archivo de texto.

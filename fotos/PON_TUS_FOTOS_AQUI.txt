@@ -1,0 +1,16 @@
+Copia aquí tus 33 fotos con estos nombres EXACTOS:
+
+foto1.jpg
+foto2.jpg
+foto3.jpg
+...
+foto33.jpg
+
+Deben ser formato .jpg (si son .png o .jpeg, cambia la extensión
+en js/script.js, línea "img.src = ...").
+
+Consejo: usa un programa como "Bulk Rename Utility" (Windows) o
+Automator (Mac) para renombrarlas todas de una vez sin hacerlo
+foto por foto.
+
+Cuando termines, borra este archivo de texto.
