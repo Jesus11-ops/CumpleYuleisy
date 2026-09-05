@@ -106,3 +106,90 @@ lightbox.addEventListener("click", (e) => {
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") cerrarLightbox();
 });
+
+
+// ===== Reproductor de la canción (YouTube oculto + controles propios) =====
+const YT_VIDEO_ID = "EUDZAhq16mM"; // ← si cambias la canción, pon aquí el ID del nuevo link
+
+let ytPlayer;
+let repiteActivo = false;
+let progresoInterval;
+
+function onYouTubeIframeAPIReady() {
+  ytPlayer = new YT.Player("yt-player", {
+    height: "0",
+    width: "0",
+    videoId: YT_VIDEO_ID,
+    playerVars: { playsinline: 1, controls: 0, rel: 0 },
+    events: {
+      onReady: () => {
+        document.getElementById("timeTotal").textContent = formatearTiempo(ytPlayer.getDuration());
+      },
+      onStateChange: onCambioEstado
+    }
+  });
+}
+
+const btnPlay = document.getElementById("btnPlay");
+const iconPlay = document.getElementById("iconPlay");
+const btnRepeat = document.getElementById("btnRepeat");
+const barra = document.getElementById("playerBar");
+const barraFill = document.getElementById("playerBarFill");
+
+function formatearTiempo(segundos) {
+  segundos = Math.floor(segundos || 0);
+  const m = Math.floor(segundos / 60);
+  const s = segundos % 60;
+  return `${m}:${s.toString().padStart(2, "0")}`;
+}
+
+function onCambioEstado(e) {
+  if (e.data === YT.PlayerState.PLAYING) {
+    btnPlay.classList.add("playing");
+    iconPlay.innerHTML = '<rect x="6" y="5" width="4" height="14"></rect><rect x="14" y="5" width="4" height="14"></rect>';
+    clearInterval(progresoInterval);
+    progresoInterval = setInterval(actualizarProgreso, 400);
+  } else {
+    btnPlay.classList.remove("playing");
+    iconPlay.innerHTML = '<path d="M8 5v14l11-7z"></path>';
+    clearInterval(progresoInterval);
+  }
+
+  if (e.data === YT.PlayerState.ENDED && repiteActivo) {
+    ytPlayer.seekTo(0);
+    ytPlayer.playVideo();
+  }
+}
+
+function actualizarProgreso() {
+  if (!ytPlayer || !ytPlayer.getDuration) return;
+  const actual = ytPlayer.getCurrentTime();
+  const total = ytPlayer.getDuration();
+  if (total > 0) {
+    barraFill.style.width = `${(actual / total) * 100}%`;
+    document.getElementById("timeActual").textContent = formatearTiempo(actual);
+    document.getElementById("timeTotal").textContent = formatearTiempo(total);
+  }
+}
+
+btnPlay.addEventListener("click", () => {
+  if (!ytPlayer || !ytPlayer.getPlayerState) return;
+  const estado = ytPlayer.getPlayerState();
+  if (estado === YT.PlayerState.PLAYING) {
+    ytPlayer.pauseVideo();
+  } else {
+    ytPlayer.playVideo();
+  }
+});
+
+btnRepeat.addEventListener("click", () => {
+  repiteActivo = !repiteActivo;
+  btnRepeat.classList.toggle("active", repiteActivo);
+});
+
+barra.addEventListener("click", (e) => {
+  if (!ytPlayer || !ytPlayer.getDuration) return;
+  const rect = barra.getBoundingClientRect();
+  const proporcion = (e.clientX - rect.left) / rect.width;
+  ytPlayer.seekTo(proporcion * ytPlayer.getDuration(), true);
+});
